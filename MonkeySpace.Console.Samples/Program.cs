@@ -13,7 +13,7 @@ namespace MonkeySpace.ConsoleApp.Samples
 
         private static async Task RunAsync()
         {
-            var connection = new HubConnection("http://localhost:17319/");
+            var connection = new HubConnection("http://localhost:17318/");
             IHubProxy chat = connection.CreateProxy("Chat");
 
             chat.On<string>("send", Console.WriteLine);
