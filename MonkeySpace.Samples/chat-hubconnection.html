@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="Scripts/jquery-1.8.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-1.0.0.min.js"></script>
+    <script>
+        $(function () {
+            var connection = $.hubConnection(),
+                chat = connection.createProxy('chat');
+            
+            chat.on('send', function (message) {
+                $('#message').append('<li>' + message + '</li>');
+            });
+
+            connection.start().done(function () {
+                $('#send').click(function () {
+                    chat.invoke('send', $('#msg').val());
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <input type="text" id="msg" value=" " />
+    <input type="button" id="send" value="send" />
+    <ul id="message">        
+    </ul>
+</body>
+</html>

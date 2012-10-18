@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style>
+        #connections {
+            font-size: 25px;
+            color: #786f6f;
+        }
+    </style>
+    <script src="Scripts/jquery-1.8.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-1.0.0.min.js"></script>
+    <script src="signalR/hubs"></script>
+    <script>
+        $(function () {
+            var connectivity = $.connection.connectivity;
+
+            connectivity.client.updateCount = function (count) {
+                var text = '';
+                switch (count) {
+                    case 0:
+                        text = 'No connections';
+                        break;
+                    case 1:
+                        text = '1 connection';
+                        break;
+                    default:
+                        text = count + ' connections';
+                }
+
+                $('#connections').html(text);
+            };
+
+            $.connection.hub.start();
+        });
+    </script>
+</head>
+<body>
+    <div id="connections"></div>
+</body>
+</html>

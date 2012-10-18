@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="Scripts/jquery-1.8.2.min.js"></script>
+    <script src="Scripts/jquery.signalR-1.0.0.min.js"></script>
+    <script src="signalr/hubs"></script>
+    <link href="content/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="content/js/bootstrap.min.js"></script>
+    <style>
+        h3 {
+            margin-left: 10px;
+            color: gray;
+        }
+    </style>
+    <script>
+        $(function () {
+            var connection = $.connection.hub,
+                form = $.connection.syncForm;
+
+            form.client.lockField = function (owner, field) {
+                $('#' + field).attr('disabled', 'disabled');
+                $('#' + field + '-owner').html(owner + ' is editing...');
+            };
+
+            form.client.unlockField = function (owner, field, value) {
+                var $field = $('#' + field);
+
+                $field.val(value);
+
+                $field.removeAttr('disabled');
+                $('#' + field + '-owner').html('');
+            };
+
+            form.client.unlockFields = function (fields) {
+                $.each(fields, function () {
+                    var $field = $('#' + this);
+
+                    $field.removeAttr('disabled');
+                    $('#' + this + '-owner').html('');
+                });
+            };
+
+            form.client.updateUsers = function (n) {
+                $('#connected').html(n + ' people viewing');
+            };
+
+            connection.start().done(function () {
+                form.server.join().done(function (id) {
+
+                    $('#identifier').html(id);
+
+                    $('input').focus(function () {
+                        var $this = $(this),
+                            field = $this.attr('name'),
+                            isOk = $this.attr('disabled') !== 'disabled';
+
+                        if (isOk) {
+                            form.server.lockField(field);
+                        }
+                    });
+
+                    $('input').blur(function () {
+                        var $this = $(this),
+                            field = $this.attr('name'),
+                            isOk = $this.attr('disabled') !== 'disabled';
+
+                        if (isOk) {
+                            form.server.unlockField(field, $(this).val());
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <h3 id="connected"></h3>
+
+    <h3 id="identifier"></h3>
+
+    <form class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="name">Name</label>
+            <div class="controls">
+                <input type="text" id="name" name="name" value="" placeholder="Enter your name..." />
+                <span id="name-owner"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="password">Age</label>
+            <div class="controls">
+                <input type="text" id="age" name="age" value="" placeholder="Enter your age..." />
+                <span id="age-owner"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="password">Address</label>
+            <div class="controls">
+                <input type="text" id="address" name="address" value="" placeholder="Enter your address..." />
+                <span id="address-owner"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn">Submit</button>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
